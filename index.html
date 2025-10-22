@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur d'Éco-Gestes Quotidien ♻️</title>
+    <!-- Chargement de Tailwind CSS pour un design moderne -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Utilisation de la police Inter pour une meilleure lisibilité */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Empêche les barres de défilement causées par les flous */
+            overflow: hidden; 
+        }
+
+        /* Animation pour le dégradé du fond */
+        @keyframes gradientPan {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Définition des animations personnalisées */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.08);
+            }
+        }
+
+        /* Classes utilitaires pour appliquer les animations */
+        .animate-fade-in-up {
+            /* Applique l'animation fadeInUp */
+            animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            opacity: 0; /* Commence caché */
+        }
+        
+        .animate-slow-pulse {
+            /* Applique l'animation pulse */
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Cercles de flou décoratifs pour un effet de profondeur */
+        .blur-circle-1 {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            /* Couleur émeraude très claire */
+            background: rgba(52, 211, 153, 0.15); 
+            border-radius: 9999px;
+            filter: blur(120px); /* Flou très prononcé */
+            top: 10vh;
+            left: 10vw;
+            z-index: -1; /* Placé derrière la carte */
+            animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .blur-circle-2 {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            /* Couleur sarcelle très claire */
+            background: rgba(45, 212, 191, 0.15); 
+            border-radius: 9999px;
+            filter: blur(100px);
+            bottom: 15vh;
+            right: 15vw;
+            z-index: -1;
+            animation: pulse 10s cubic-bezier(0.4, 0, 0.6, 1) infinite reverse;
+        }
+    </style>
+</head>
+<!-- 
+  Changements du body:
+  - Dégradé plus prononcé (emerald-100, teal-100)
+  - Ajout de 'relative' et 'overflow-hidden'
+  - Ajout du style pour l'animation du dégradé
+-->
+<body class="bg-gradient-to-br from-emerald-100 via-gray-50 to-teal-100 text-gray-800 flex items-center justify-center min-h-screen p-4 relative overflow-hidden" 
+      style="background-size: 200% 200%; animation: gradientPan 15s ease infinite;">
+
+    <!-- Ajout des cercles de flou décoratifs -->
+    <div class="blur-circle-1"></div>
+    <div class="blur-circle-2"></div>
+
+    <!-- La carte principale a maintenant l'animation "fade-in-up" -->
+    <main class="w-full max-w-2xl animate-fade-in-up" style="animation-delay: 100ms;">
+        <!-- 
+          Style "Glassmorphism" : 
+          - bg-white/80 (fond blanc à 80% d'opacité)
+          - backdrop-blur-lg (floute ce qui est derrière)
+          - shadow-2xl (ombre plus prononcée et douce)
+          - border (bordure très fine pour délimiter)
+          - Ajout d'une transition pour le survol
+        -->
+        <!-- Ajout des classes de transition et de survol (hover) -->
+        <div class="bg-white/80 backdrop-blur-lg p-8 sm:p-12 rounded-2xl shadow-2xl text-center border border-gray-200/50 
+                    transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-3xl">
+            
+            <!-- Titre avec texte en dégradé -->
+            <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-700 mb-4">
+                L'éco-geste du jour
+            </h1>
+            
+            <!-- Emoji avec animation de pulsation lente -->
+            <span class="text-6xl animate-slow-pulse inline-block" role="img" aria-label="Planète Terre">🌍</span>
+
+            <!-- 
+                DÉBUT DU CONTENU MIS À JOUR QUOTIDIENNEMENT
+                Le script Python va rechercher ces commentaires
+                pour remplacer le bloc div#eco-gesture ci-dessous.
+            -->
+            <!-- GESTURE_START -->
+            <!-- 
+              Ajout d'une hauteur minimale et centrage flex
+              pour éviter le "saut" de la page lors du chargement
+            -->
+            <div id="eco-gesture" class="mt-8 min-h-[160px] flex flex-col justify-center">
+                <h2 class="text-2xl font-semibold text-emerald-600 mt-6 mb-3">
+                    Projet en cours d'initialisation...
+                </h2>
+                <p class="text-lg text-gray-600">
+                    L'action GitHub n'a pas encore été exécutée. Elle se lancera à minuit ou lors de votre premier "push" sur le dépôt !
+                </p>
+            </div>
+            <!-- GESTURE_END -->
+            <!-- FIN DU CONTENU MIS À JOUR -->
+
+            <footer class="mt-12 pt-6 border-t border-gray-200">
+                <p class="text-sm text-gray-500">
+                    Un projet simple utilisant les <a href="https://github.com/features/actions" class="text-emerald-600 hover:underline">GitHub Actions</a>.
+                </p>
+            </footer>
+        </div>
+    </main>
+
+</body>
+</html>
+
+
