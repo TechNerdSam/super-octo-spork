@@ -3,360 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur d'Éco-Gestes ⚡️</title>
+    <title>Tableau de Bord Éco-Gestes 2025</title>
     <!-- Chargement de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Police : Inter (utilisée pour tout pour un look épuré et moderne) -->
+    <!-- Police : Inter (toujours un excellent choix pour 2025) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Empêche le flash de la barre de défilement pendant les animations */
-            overflow: hidden; 
+            /* L'arrière-plan principal est un noir profond pour faire ressortir le "glassmorphism" */
+            background-color: #050505;
         }
 
-        /* --- Animations de l'arrière-plan "Aurora" --- */
-        @keyframes gradientPan {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* --- NOUVEL ARRIÈRE-PLAN "AURORA" --- */
+        /* Plus ambiant, plus lent, et plus grand pour un effet "premium" */
+        @keyframes subtlePan {
+            0% { transform: translate(0%, 0%) rotate(0deg); }
+            25% { transform: translate(10%, -15%) rotate(3deg); }
+            50% { transform: translate(-10%, 15%) rotate(-2deg); }
+            75% { transform: translate(15%, 5%) rotate(1deg); }
+            100% { transform: translate(0%, 0%) rotate(0deg); }
         }
 
-        /* Animation pour le logo: rotation subtile et légère croissance */
-        @keyframes rotateGrow {
-            0%, 100% { 
-                transform: translateY(0) rotate(0deg) scale(1);
-            }
-            50% { 
-                transform: translateY(-5px) rotate(2deg) scale(1.03);
-            }
-        }
-
-        /* Animation pour l'apparition de la carte */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        /* --- Animations du texte (effet machine à sous) --- */
-        @keyframes slideOutUp {
-            from { transform: translateY(0); opacity: 1; }
-            to { transform: translateY(-100%); opacity: 0; }
-        }
-        @keyframes slideInDown {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .aurora-blur {
+            position: fixed;
+            width: 800px; /* Beaucoup plus grand */
+            height: 800px;
+            border-radius: 9999px;
+            filter: blur(200px); /* Flou très intense */
+            opacity: 0.15; /* Subtil */
+            z-index: -1;
+            animation: subtlePan 60s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
         }
         
-        #eco-gesture {
+        /* --- NOUVELLE CARTE "BENTO BOX" --- */
+        /* Style de base pour chaque boîte de la grille */
+        .bento-box {
+            /* Glassmorphism raffiné : fond sombre, légèrement transparent */
+            background-color: rgba(16, 16, 16, 0.7); /* Plus sombre que le bg/50 */
+            /* Le backdrop-blur est la clé */
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            /* Bordure subtile pour "attraper" la lumière */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            /* Coins très arrondis, tendance 2025 */
+            border-radius: 24px; /* équivaut à rounded-3xl de Tailwind */
+            padding: 24px; /* p-6 */
+            /* Ombre douce pour un effet de profondeur */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            /* Animation d'apparition */
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
             position: relative;
-            overflow: hidden;
-            transition: none;
+            overflow: hidden; /* Pour les effets de lueur internes */
         }
-        .gesture-content {
-            width: 100%;
-        }
-        .slide-out {
-            animation: slideOutUp 0.4s cubic-bezier(0.76, 0, 0.24, 1) forwards;
-            position: absolute;
-        }
-        .slide-in {
-            animation: slideInDown 0.4s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        
+        /* Animation d'apparition pour les boîtes */
+        @keyframes fadeInUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
-        /* --- Cercles de flou "Aurora" animés --- */
-        .blur-circle {
+        /* --- EFFET DE LUEUR AU SURVOL --- */
+        /* Une lueur subtile suit la souris à l'intérieur de la boîte */
+        .bento-box::before {
+            content: '';
             position: absolute;
-            border-radius: 9999px;
-            /* Flou encore plus intense pour un effet plus éthéré */
-            filter: blur(200px); 
-            z-index: -2;
-            will-change: transform;
+            z-index: 0;
+            left: var(--x, 50%);
+            top: var(--y, 50%);
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle closest-side, rgba(0, 230, 230, 0.15), transparent);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.4s, left 0.2s, top 0.2s;
+            pointer-events: none; /* Important */
         }
-        .blur-circle-1 {
-            width: 400px;
-            height: 400px;
-            /* NOUVELLE COULEUR : Cyan vif */
-            background: rgba(6, 182, 212, 0.2); 
-            top: 10vh;
-            left: 15vw;
-            animation: move-blur 20s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
-        }
-        .blur-circle-2 {
-            width: 350px;
-            height: 350px;
-            /* NOUVELLE COULEUR : Indigo/Bleu */
-            background: rgba(99, 102, 241, 0.15); 
-            top: 50vh;
-            left: 60vw;
-            animation: move-blur 25s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate-reverse;
-        }
-        @keyframes move-blur {
-            from { transform: translate(0, 0) scale(1); }
-            to { transform: translate(20vw, -15vh) scale(1.1); }
+        .bento-box:hover::before {
+            opacity: 1;
         }
 
-        /* NOUVELLE ANIMATION : Reflet de bordure */
-        @keyframes borderShine {
-            0% { background-position: -100% 0; }
-            100% { background-position: 200% 0; }
+        /* Conteneur pour le contenu textuel (pour les animations) */
+        .content-swap {
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            will-change: opacity, transform;
+        }
+        /* Classes pour l'animation de changement de contenu */
+        .fade-out {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .fade-in {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* --- Texture "Grain" (Noise) --- */
-        /* Texture plus subtile pour le mode sombre */
+        /* Toujours une bonne touche pour le design 2025 */
         body::after {
             content: "";
             position: fixed;
             inset: 0;
-            z-index: -1;
-            opacity: 0.02; /* Réduit pour le mode sombre */
+            z-index: 1; /* Au-dessus de l'aurora, en dessous du contenu */
+            opacity: 0.03;
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNyIgbnVtT2N0YXZlcz0iMiIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWx0ZXI9InVybCgjbnopIiBvcGFjaXR5PSIwLjEzIi8+PC9zdmc+');
             pointer-events: none;
         }
-
-        /* --- Carte 3D avec reflet de bordure --- */
-        .card-3d {
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            will-change: transform;
-            transform-style: preserve-d;
-            animation: fadeInUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-            opacity: 0;
-            position: relative;
-        }
-        /* Bordure "futuriste" plus subtile, blanche/transparente */
-        .card-3d::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            padding: 1px; /* Épaisseur de la bordure */
-            
-            /* Gradient de bordure mis à jour pour l'animation */
-            background: linear-gradient(115deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0));
-            background-size: 200% 100%; /* Taille pour l'animation */
-            
-            /* Ajout de l'animation */
-            animation: borderShine 6s linear infinite;
-            
-            -webkit-mask: 
-                linear-gradient(#fff 0 0) content-box,
-                linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Le style du bouton est maintenant géré par Tailwind directement dans le JS */
-
+        
     </style>
 </head>
-<!-- NOUVEAU FOND : Dark mode, profond et épuré -->
-<body class="bg-gradient-to-br from-gray-950 via-black to-gray-950 text-gray-100 flex items-center justify-center min-h-screen p-4 relative overflow-hidden" 
-      style="background-size: 200% 200%; animation: gradientPan 20s ease infinite;">
+<body class="text-gray-100 flex items-center justify-center min-h-screen p-4 md:p-8 relative overflow-hidden">
 
     <!-- Arrière-plan Aurora -->
-    <div classs="fixed inset-0 z-[-2]">
-        <div class="blur-circle blur-circle-1"></div>
-        <div class="blur-circle blur-circle-2"></div>
+    <div class="fixed inset-0 z-[-1]">
+        <!-- Couleur 1: Cyan/Teal (Écologie) -->
+        <div class="aurora-blur" style="background-color: #06B6D4; top: -20%; left: -20%;"></div>
+        <!-- Couleur 2: Indigo (Technologie) -->
+        <div class="aurora-blur" style="background-color: #4F46E5; bottom: -20%; right: -20%; animation-delay: -30s;"></div>
     </div>
 
-    <main class="w-full max-w-2xl" style="perspective: 1200px;">
+    <!-- Conteneur principal (le contenu est au-dessus du grain) -->
+    <main class="w-full max-w-5xl mx-auto z-10 relative">
         
-        <!-- NOUVELLE CARTE : "Glassmorphism" sombre AVEC LUEUR -->
-        <div class="card-3d bg-black/50 backdrop-blur-2xl p-10 sm:p-12 rounded-3xl text-center border border-white/10 shadow-[0_0_40px_rgba(6,182,212,0.15)]">
-            
-            <div style="transform: translateZ(20px);">
-                
-                <!-- LOGO SVG MIS À JOUR : Nouvelles couleurs de gradient -->
-                <div class="flex justify-center mb-6">
-                    <svg class="w-20 h-20" style="animation: rotateGrow 6s ease-in-out infinite alternate;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <!-- Gradient mis à jour (Cyan -> Bleu) -->
-                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#22D3EE" /> <!-- cyan-400 -->
-                                <stop offset="100%" stop-color="#3B82F6" /> <!-- blue-500 -->
-                            </linearGradient>
-                        </defs>
-                        <path d="M50 5 C30 5 10 25 10 50 C10 75 30 95 50 95 C70 95 90 75 90 50 C90 25 70 5 50 5 Z M50 15 C65 15 80 30 80 50 C80 70 65 85 50 85 C35 85 20 70 20 50 C20 30 35 15 50 15 Z" fill="url(#logoGradient)" opacity="0.1"></path>
-                        <path d="M50 15 C60 25 65 40 60 50 C55 60 40 65 30 60 L30 40 C35 30 45 20 50 15 Z" fill="url(#logoGradient)"></path>
-                        <path d="M50 85 C40 75 35 60 40 50 C45 40 60 35 70 40 L70 60 C65 70 55 80 50 85 Z" fill="url(#logoGradient)" opacity="0.7"></path>
-                        <circle cx="50" cy="50" r="5" fill="#FFFFFF" opacity="0.3"/> 
-                    </svg>
+        <header class="mb-8 text-center" style="animation: fadeInUp 0.5s forwards; opacity: 0;">
+            <!-- Titre principal, typographie moderne -->
+            <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400 mb-2">
+                Votre Impact Écologique
+            </h1>
+            <p class="text-lg text-gray-400">Chaque geste compte. Découvrez votre sélection du jour.</p>
+        </header>
+
+        <!-- NOUVELLE GRILLE BENTO (le cœur de la refonte) -->
+        <!-- Responsive : 1 colonne sur mobile (col-span-3), 3 colonnes sur desktop -->
+        <div class="grid grid-cols-3 gap-6">
+
+            <!-- BOÎTE 1 : GESTE PRINCIPAL (prend 2/3 de la largeur) -->
+            <div class="bento-box col-span-3 md:col-span-2 md:row-span-2 flex flex-col justify-between" style="animation-delay: 0.1s;">
+                <div id="main-tip-content" class="content-swap relative z-10">
+                    <!-- Le contenu sera injecté par JS ici -->
                 </div>
-
-                <!-- TITRE MIS À JOUR : Gradient vif et police plus épaisse -->
-                <h1 class="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400 mb-4">
-                    L'éco-geste du moment
-                </h1>
-
-                <div id="eco-gesture" class="mt-8 min-h-[190px] flex flex-col justify-center">
-                    <!-- Le contenu (titre, description, bouton) sera injecté ici -->
-                </div>
-
-                <!-- FOOTER MIS À JOUR : Couleurs adaptées au mode sombre -->
-                <footer class="mt-8 pt-6 border-t border-white/10">
-                    <p class="text-sm text-gray-400">
-                        Un nouveau geste toutes les 5 minutes.
-                    </p>
-                </footer>
+                <!-- Espace réservé pour garder la hauteur lors du rechargement -->
+                <div class="min-h-[250px]"></div>
             </div>
+
+            <!-- BOÎTE 2 : GESTE SECONDAIRE 1 -->
+            <div class="bento-box col-span-3 md:col-span-1" style="animation-delay: 0.2s;">
+                <div id="secondary-tip-1-content" class="content-swap relative z-10">
+                    <!-- Le contenu sera injecté par JS ici -->
+                </div>
+                <div class="min-h-[100px]"></div>
+            </div>
+
+            <!-- BOÎTE 3 : BOUTON DE RAFRAÎCHISSEMENT (devient un élément d'UI) -->
+            <div id="refresh-button" class="bento-box col-span-3 md:col-span-1 flex flex-col justify-center items-center text-center cursor-pointer group bg-cyan-600/30 hover:bg-cyan-500/40 transition-colors duration-300" style="animation-delay: 0.3s;">
+                <div class="relative z-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-cyan-200 group-hover:rotate-90 transition-transform duration-300">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    <h3 class="text-xl font-bold mt-2 text-cyan-100">Nouveaux Gestes</h3>
+                    <p class="text-sm text-cyan-300">Cliquez pour rafraîchir</p>
+                </div>
+            </div>
+
+            <!-- BOÎTE 4 : STATISTIQUE (ou geste secondaire 2) -->
+            <div class="bento-box col-span-3 md:col-span-3" style="animation-delay: 0.4s;">
+                <div id="secondary-tip-2-content" class="content-swap relative z-10">
+                    <!-- Le contenu sera injecté par JS ici -->
+                </div>
+                <div class="min-h-[80px]"></div>
+            </div>
+            
         </div>
     </main>
 
     <!-- DÉBUT DU SCRIPT -->
     <script>
+        // --- NOUVELLE STRUCTURE DE DONNÉES ---
+        // Ajout d'icônes pour une UI plus riche
         const ecoGestures = [
             {
+                icon: "💡",
                 title: "Éteignez les lumières",
-                description: "Pensez à éteindre les lumières en quittant une pièce. Un geste simple qui économise de l'énergie !"
+                description: "Pensez à éteindre les lumières en quittant une pièce. Un geste simple qui économise de l'énergie et réduit votre facture."
             },
             {
+                icon: "💧",
                 title: "Préférez la douche au bain",
-                description: "Une douche rapide consomme 3 à 4 fois moins d'eau qu'un bain."
+                description: "Une douche rapide (5 min) consomme 40-60 litres d'eau, contre 150-200 litres pour un bain. L'économie est massive !"
             },
             {
+                icon: "♻️",
                 title: "Triez vos déchets",
-                description: "Le recyclage permet de donner une seconde vie aux matériaux et de réduire les déchets."
+                description: "Le recyclage permet de donner une seconde vie aux matériaux. Une bouteille en plastique peut redevenir une bouteille."
             },
             {
+                icon: "🔌",
                 title: "Débranchez les appareils en veille",
-                description: "Même en veille, vos appareils consomment de l'électricité. Débranchez-les lorsque vous ne les utilisez pas."
+                description: "La 'consommation fantôme' des appareils en veille peut représenter jusqu'à 10% de votre facture d'électricité."
             },
             {
+                icon: "🍾",
                 title: "Utilisez une gourde",
-                description: "Remplacez les bouteilles en plastique par une gourde réutilisable. C'est meilleur pour la planète."
+                description: "Chaque seconde, 10 000 bouteilles en plastique sont consommées dans le monde. Une gourde réutilisable change la donne."
             },
             {
+                icon: "🍎",
                 title: "Mangez local et de saison",
-                description: "Consommer des produits locaux et de saison réduit l'empreinte carbone liée au transport."
+                description: "Consommer local réduit l'empreinte carbone liée au transport et soutient l'économie de votre région."
             },
             {
+                icon: "🌡️",
                 title: "Baissez le chauffage d'1°C",
-                description: "Baisser votre chauffage de seulement 1°C peut réduire votre consommation d'énergie de 7%."
+                description: "Incroyable mais vrai : baisser votre chauffage de seulement 1°C peut réduire votre consommation d'énergie de 7%."
             },
             {
+                icon: "🍳",
                 title: "Mettez un couvercle sur vos casseroles",
-                description: "En couvrant vos casseroles pendant la cuisson, vous économisez jusqu'à 25% d'énergie."
+                description: "En couvrant vos casseroles pendant la cuisson, vous gardez la chaleur et économisez jusqu'à 25% d'énergie."
             },
             {
-                title: "Optez pour les transports en commun",
-                description: "Pour vos trajets, privilégiez le bus, le métro ou le vélo plutôt que la voiture individuelle."
+                icon: "🚲",
+                title: "Marchez ou pédalez",
+                description: "Pour les trajets courts (moins de 5 km), laissez la voiture au garage. C'est bon pour vous et pour la planète."
             },
             {
+                icon: "🚫",
                 title: "Stop à la publicité papier",
-                description: "Apposez un autocollant 'Stop Pub' sur votre boîte aux lettres pour réduire le gaspillage de papier."
+                description: "Un autocollant 'Stop Pub' sur votre boîte aux lettres peut vous épargner jusqu'à 30kg de papier par an."
             },
             {
+                icon: "🔧",
                 title: "Réparez au lieu de jeter",
-                description: "Avant de jeter un objet, vérifiez s'il peut être réparé. C'est économique et écologique."
+                description: "Avant de jeter, demandez-vous : 'Est-ce réparable ?'. L'économie circulaire commence ici."
+            },
+            {
+                icon: "💻",
+                title: "Optimisez vos e-mails",
+                description: "Ne stockez pas d'e-mails inutiles et compressez vos pièces jointes. Les data centers consomment énormément d'énergie."
             }
         ];
 
-        const gestureContainer = document.getElementById('eco-gesture');
-        let currentGestureIndex = -1;
-        let gestureInterval;
+        // --- RÉFÉRENCES AUX ÉLÉMENTS DU DOM ---
+        const mainTipContainer = document.getElementById('main-tip-content');
+        const secondaryTip1Container = document.getElementById('secondary-tip-1-content');
+        const secondaryTip2Container = document.getElementById('secondary-tip-2-content');
+        const refreshButton = document.getElementById('refresh-button');
 
-        function updateGesture() {
-            const oldContent = gestureContainer.querySelector('.gesture-content');
+        let isUpdating = false; // Verrou pour éviter les double-clics
 
-            if (oldContent) {
-                oldContent.classList.add('slide-out');
-                oldContent.classList.remove('slide-in');
-                setTimeout(() => {
-                    if (oldContent.parentNode === gestureContainer) {
-                        gestureContainer.removeChild(oldContent);
-                    }
-                }, 400); 
-            }
+        // --- FONCTION DE RAFRAÎCHISSEMENT DES GESTES ---
+        function updateGestures() {
+            if (isUpdating) return; // Empêche l'exécution si déjà en cours
+            isUpdating = true;
 
-            let newIndex;
-            do {
-                newIndex = Math.floor(Math.random() * ecoGestures.length);
-            } while (newIndex === currentGestureIndex && ecoGestures.length > 1);
-            
-            currentGestureIndex = newIndex;
-            const gesture = ecoGestures[currentGestureIndex];
+            // 1. Appliquer les classes de fondu "sortant"
+            [mainTipContainer, secondaryTip1Container, secondaryTip2Container].forEach(container => {
+                container.classList.add('fade-out');
+                container.classList.remove('fade-in');
+            });
 
-            const newContent = document.createElement('div');
-            newContent.className = 'gesture-content slide-in';
-            
-            // --- CONTENU DYNAMIQUE MIS À JOUR ---
-            // Les classes de style sont modifiées pour le thème sombre
-            newContent.innerHTML = `
-                <!-- Titre du geste (sans serif, couleur cyan) -->
-                <h2 class="text-2xl lg:text-3xl font-semibold text-cyan-300 mt-6 mb-4" style="transform: translateZ(50px);">
-                    ${gesture.title}
-                </h2>
-                <!-- Description (texte plus clair) -->
-                <p class="text-lg text-gray-200 mb-8" style="transform: translateZ(30px);">
-                    ${gesture.description}
-                </p>
-                <!-- NOUVEAU BOUTON : Style futuriste avec Tailwind -->
-                <button id="next-gesture-btn" 
-                        class="group inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-cyan-400/40 active:scale-95" 
-                        style="transform: translateZ(20px);">
-                    Geste suivant
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" 
-                         class="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-                </button>
-            `;
-
-            gestureContainer.appendChild(newContent);
-
-            // Le listener de bouton est attaché par ID, donc cela fonctionne toujours
+            // 2. Attendre la fin de l'animation "sortante"
             setTimeout(() => {
-                const newButton = document.getElementById('next-gesture-btn');
-                if (newButton) {
-                    newButton.addEventListener('click', () => {
-                        clearInterval(gestureInterval);
-                        updateGesture();
-                        startInterval();
-                    });
-                }
-            }, 0);
+                // 3. Mélanger et sélectionner les nouveaux gestes
+                const shuffledGestures = [...ecoGestures].sort(() => 0.5 - Math.random());
+                
+                const mainTip = shuffledGestures[0];
+                const secondaryTip1 = shuffledGestures[1];
+                const secondaryTip2 = shuffledGestures[2]; // Un troisième geste pour la boîte du bas
+
+                // 4. Injecter le nouveau contenu HTML
+                mainTipContainer.innerHTML = `
+                    <span class="text-5xl mb-4 block">${mainTip.icon}</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-3">
+                        ${mainTip.title}
+                    </h2>
+                    <p class="text-lg text-gray-300 leading-relaxed">
+                        ${mainTip.description}
+                    </p>
+                `;
+
+                secondaryTip1Container.innerHTML = `
+                    <span class="text-4xl mb-3 block">${secondaryTip1.icon}</span>
+                    <h3 class="text-2xl font-bold text-white">
+                        ${secondaryTip1.title}
+                    </h3>
+                `;
+
+                secondaryTip2Container.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <span class="text-4xl">${secondaryTip2.icon}</span>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">
+                                ${secondaryTip2.title}
+                            </h3>
+                            <p class="text-gray-400">Pensez-y aussi !</p>
+                        </div>
+                    </div>
+                `;
+
+                // 5. Appliquer les classes de fondu "entrant"
+                [mainTipContainer, secondaryTip1Container, secondaryTip2Container].forEach(container => {
+                    container.classList.remove('fade-out');
+                    container.classList.add('fade-in');
+                });
+                
+                isUpdating = false; // Libérer le verrou
+            }, 400); // Doit correspondre à la durée de transition CSS
         }
 
-        function startInterval() {
-            // L'intervalle de 5 minutes est conservé
-            gestureInterval = setInterval(updateGesture, 5 * 60 * 1000); 
-        }
+        // --- ÉVÉNEMENTS ---
 
-        // Démarrage initial
-        updateGesture();
-        startInterval();
+        // Rafraîchissement au clic
+        refreshButton.addEventListener('click', updateGestures);
 
-        // --- GESTION DE L'EFFET 3D "TILT" ---
-        // Cette partie reste inchangée, elle fonctionne parfaitement avec le nouveau design
-        const card = document.querySelector('.card-3d');
-        const mainContainer = document.querySelector('main');
+        // Rafraîchissement automatique (5 minutes, comme dans l'original)
+        setInterval(updateGestures, 5 * 60 * 1000);
 
-        mainContainer.addEventListener('mousemove', (e) => {
-            const { width, height, left, top } = card.getBoundingClientRect();
-            const centerX = left + width / 2;
-            const centerY = top + height / 2;
-            const mouseX = e.clientX - centerX;
-            const mouseY = e.clientY - centerY;
-            
-            // Amplitude de rotation réduite pour un effet plus subtil
-            const rotateX = (mouseY / (height / 2)) * -5; 
-            const rotateY = (mouseX / (width / 2)) * 5;
-            
-            card.style.transition = 'transform 0.1s linear';
-            card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        // Premier chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialiser le contenu sans délai pour le premier chargement
+            // On force un état "fade-in" initial
+            [mainTipContainer, secondaryTip1Container, secondaryTip2Container].forEach(container => {
+                container.classList.add('fade-in');
+            });
+            updateGestures();
         });
 
-        mainContainer.addEventListener('mouseleave', () => {
-            card.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
-            card.style.transform = `perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)`;
+        // --- EFFET DE LUEUR SUR LES BOÎTES BENTO ---
+        document.querySelectorAll('.bento-box').forEach(box => {
+            box.addEventListener('mousemove', (e) => {
+                const rect = box.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                box.style.setProperty('--x', `${x}px`);
+                box.style.setProperty('--y', `${y}px`);
+            });
         });
 
     </script>
 </body>
 </html>
-
