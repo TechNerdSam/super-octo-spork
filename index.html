@@ -1,351 +1,394 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord Éco-Gestes 2025</title>
-    <!-- Chargement de Tailwind CSS -->
+    <title>ECO-BENTO 2026 | L'Habitude Durable</title>
+    <!-- Tailwind CSS (CDN pour la démo, production-ready) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Police : Inter (toujours un excellent choix pour 2025) -->
+    
+    <!-- Polices : Space Grotesk (Titres Tech) & Inter (Lecture) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            /* L'arrière-plan principal est un noir profond pour faire ressortir le "glassmorphism" */
-            background-color: #050505;
-        }
-
-        /* --- NOUVEL ARRIÈRE-PLAN "AURORA" --- */
-        /* Plus ambiant, plus lent, et plus grand pour un effet "premium" */
-        @keyframes subtlePan {
-            0% { transform: translate(0%, 0%) rotate(0deg); }
-            25% { transform: translate(10%, -15%) rotate(3deg); }
-            50% { transform: translate(-10%, 15%) rotate(-2deg); }
-            75% { transform: translate(15%, 5%) rotate(1deg); }
-            100% { transform: translate(0%, 0%) rotate(0deg); }
-        }
-
-        .aurora-blur {
-            position: fixed;
-            width: 800px; /* Beaucoup plus grand */
-            height: 800px;
-            border-radius: 9999px;
-            filter: blur(200px); /* Flou très intense */
-            opacity: 0.15; /* Subtil */
-            z-index: -1;
-            animation: subtlePan 60s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
-        }
-        
-        /* --- NOUVELLE CARTE "BENTO BOX" --- */
-        /* Style de base pour chaque boîte de la grille */
-        .bento-box {
-            /* Glassmorphism raffiné : fond sombre, légèrement transparent */
-            background-color: rgba(16, 16, 16, 0.7); /* Plus sombre que le bg/50 */
-            /* Le backdrop-blur est la clé */
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            /* Bordure subtile pour "attraper" la lumière */
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            /* Coins très arrondis, tendance 2025 */
-            border-radius: 24px; /* équivaut à rounded-3xl de Tailwind */
-            padding: 24px; /* p-6 */
-            /* Ombre douce pour un effet de profondeur */
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            /* Animation d'apparition */
-            transform: translateY(20px);
-            opacity: 0;
-            animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-            position: relative;
-            overflow: hidden; /* Pour les effets de lueur internes */
-        }
-        
-        /* Animation d'apparition pour les boîtes */
-        @keyframes fadeInUp {
-            to {
-                transform: translateY(0);
-                opacity: 1;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: "rgba(255, 255, 255, 0.03)",
+                        glassBorder: "rgba(255, 255, 255, 0.08)",
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
             }
         }
+    </script>
 
-        /* --- EFFET DE LUEUR AU SURVOL --- */
-        /* Une lueur subtile suit la souris à l'intérieur de la boîte */
-        .bento-box::before {
-            content: '';
+    <style>
+        /* --- CORE VISUALS 2026 --- */
+        :root {
+            --cursor-size: 400px;
+        }
+
+        body {
+            background-color: #030303; /* Noir absolu pour OLED */
+            overflow-x: hidden;
+            color: #e5e5e5;
+        }
+
+        /* Scrollbar moderne et invisible */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030303;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* --- BACKGROUND FX --- */
+        .aurora-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .orb {
             position: absolute;
-            z-index: 0;
-            left: var(--x, 50%);
-            top: var(--y, 50%);
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle closest-side, rgba(0, 230, 230, 0.15), transparent);
             border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.4s, left 0.2s, top 0.2s;
-            pointer-events: none; /* Important */
-        }
-        .bento-box:hover::before {
-            opacity: 1;
+            filter: blur(120px);
+            opacity: 0.4;
+            animation: moveOrb 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Conteneur pour le contenu textuel (pour les animations) */
-        .content-swap {
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            will-change: opacity, transform;
+        @keyframes moveOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(10%, -10%) scale(1.1); }
         }
-        /* Classes pour l'animation de changement de contenu */
-        .fade-out {
+
+        /* Texture Grain (Noise) - Essential for "Tactile" UI */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            opacity: 0.04;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- GLASSMORPHISM COMPONENTS --- */
+        .glass-card {
+            background: linear-gradient(180deg, rgba(20, 20, 20, 0.6) 0%, rgba(10, 10, 10, 0.4) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glassBorder);
+            border-radius: 32px;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+        }
+
+        /* --- TYPOGRAPHY HIGHLIGHTS --- */
+        .text-gradient {
+            background: linear-gradient(to right, #22d3ee, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* --- UTILS --- */
+        .reveal-on-scroll {
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        .fade-in {
+        .reveal-visible {
             opacity: 1;
             transform: translateY(0);
         }
 
-        /* --- Texture "Grain" (Noise) --- */
-        /* Toujours une bonne touche pour le design 2025 */
-        body::after {
-            content: "";
-            position: fixed;
-            inset: 0;
-            z-index: 1; /* Au-dessus de l'aurora, en dessous du contenu */
-            opacity: 0.03;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNyIgbnVtT2N0YXZlcz0iMiIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWx0ZXI9InVybCgjbnopIiBvcGFjaXR5PSIwLjEzIi8+PC9zdmc+');
-            pointer-events: none;
+        /* Mobile Nav "Island" */
+        .island-nav {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        
     </style>
 </head>
-<body class="text-gray-100 flex items-center justify-center min-h-screen p-4 md:p-8 relative overflow-hidden">
+<body class="antialiased selection:bg-cyan-500 selection:text-white">
 
-    <!-- Arrière-plan Aurora -->
-    <div class="fixed inset-0 z-[-1]">
-        <!-- Couleur 1: Cyan/Teal (Écologie) -->
-        <div class="aurora-blur" style="background-color: #06B6D4; top: -20%; left: -20%;"></div>
-        <!-- Couleur 2: Indigo (Technologie) -->
-        <div class="aurora-blur" style="background-color: #4F46E5; bottom: -20%; right: -20%; animation-delay: -30s;"></div>
+    <!-- Texture (Always on top) -->
+    <div class="noise-overlay"></div>
+
+    <!-- Background Animé (Fixed) -->
+    <div class="aurora-bg">
+        <div class="orb w-[600px] h-[600px] bg-cyan-600/30 top-[-10%] left-[-10%]"></div>
+        <div class="orb w-[500px] h-[500px] bg-indigo-600/30 bottom-[10%] right-[-5%] animation-delay-2000"></div>
+        <div class="orb w-[400px] h-[400px] bg-purple-600/20 top-[40%] left-[30%]"></div>
     </div>
 
-    <!-- Conteneur principal (le contenu est au-dessus du grain) -->
-    <main class="w-full max-w-5xl mx-auto z-10 relative">
+    <!-- NAVIGATION FLOTTANTE (Mobile First UX) -->
+    <nav class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-auto">
+        <div class="island-nav px-6 py-3 rounded-full flex items-center gap-6">
+            <a href="#hero" class="text-gray-400 hover:text-white transition-colors" aria-label="Accueil">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            </a>
+            <div class="w-px h-4 bg-gray-700"></div>
+            <a href="#generator" class="text-cyan-400 font-medium hover:text-cyan-300 transition-colors">Gestes</a>
+            <a href="#data" class="text-gray-400 hover:text-white transition-colors">Impact</a>
+            <div class="w-px h-4 bg-gray-700"></div>
+            <button id="nav-refresh" class="text-gray-400 hover:text-white transition-colors animate-pulse-slow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32 flex flex-col gap-32">
         
-        <header class="mb-8 text-center" style="animation: fadeInUp 0.5s forwards; opacity: 0;">
-            <!-- Titre principal, typographie moderne -->
-            <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400 mb-2">
-                Votre Impact Écologique
-            </h1>
-            <p class="text-lg text-gray-400">Chaque geste compte. Découvrez votre sélection du jour.</p>
-        </header>
-
-        <!-- NOUVELLE GRILLE BENTO (le cœur de la refonte) -->
-        <!-- Responsive : 1 colonne sur mobile (col-span-3), 3 colonnes sur desktop -->
-        <div class="grid grid-cols-3 gap-6">
-
-            <!-- BOÎTE 1 : GESTE PRINCIPAL (prend 2/3 de la largeur) -->
-            <div class="bento-box col-span-3 md:col-span-2 md:row-span-2 flex flex-col justify-between" style="animation-delay: 0.1s;">
-                <div id="main-tip-content" class="content-swap relative z-10">
-                    <!-- Le contenu sera injecté par JS ici -->
-                </div>
-                <!-- Espace réservé pour garder la hauteur lors du rechargement -->
-                <div class="min-h-[250px]"></div>
-            </div>
-
-            <!-- BOÎTE 2 : GESTE SECONDAIRE 1 -->
-            <div class="bento-box col-span-3 md:col-span-1" style="animation-delay: 0.2s;">
-                <div id="secondary-tip-1-content" class="content-swap relative z-10">
-                    <!-- Le contenu sera injecté par JS ici -->
-                </div>
-                <div class="min-h-[100px]"></div>
-            </div>
-
-            <!-- BOÎTE 3 : BOUTON DE RAFRAÎCHISSEMENT (devient un élément d'UI) -->
-            <div id="refresh-button" class="bento-box col-span-3 md:col-span-1 flex flex-col justify-center items-center text-center cursor-pointer group bg-cyan-600/30 hover:bg-cyan-500/40 transition-colors duration-300" style="animation-delay: 0.3s;">
-                <div class="relative z-10">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-cyan-200 group-hover:rotate-90 transition-transform duration-300">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                    </svg>
-                    <h3 class="text-xl font-bold mt-2 text-cyan-100">Nouveaux Gestes</h3>
-                    <p class="text-sm text-cyan-300">Cliquez pour rafraîchir</p>
-                </div>
-            </div>
-
-            <!-- BOÎTE 4 : STATISTIQUE (ou geste secondaire 2) -->
-            <div class="bento-box col-span-3 md:col-span-3" style="animation-delay: 0.4s;">
-                <div id="secondary-tip-2-content" class="content-swap relative z-10">
-                    <!-- Le contenu sera injecté par JS ici -->
-                </div>
-                <div class="min-h-[80px]"></div>
+        <!-- SECTION 1: HERO SCROLLTELLING -->
+        <section id="hero" class="min-h-[80vh] flex flex-col justify-center items-start reveal-on-scroll">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-900/10 text-cyan-400 text-xs font-bold uppercase tracking-widest mb-6">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                v2.6 Système Actif
             </div>
             
-        </div>
+            <h1 class="font-display text-5xl md:text-8xl font-bold leading-tight mb-6 tracking-tight">
+                L'Écologie n'est pas <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-500 to-gray-700">une contrainte.</span><br>
+                C'est une <span class="text-gradient">Upgrade.</span>
+            </h1>
+            
+            <p class="text-xl text-gray-400 max-w-2xl leading-relaxed mb-10">
+                Bienvenue dans <strong>Super Octo Spork</strong>. Nous utilisons le neuro-design pour hacker votre système de récompense et transformer l'action climatique en habitude inconsciente.
+            </p>
+
+            <a href="#generator" class="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-cyan-50 transition-all duration-300">
+                Lancer le Générateur
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+            </a>
+        </section>
+
+
+        <!-- SECTION 2: BENTO GRID (The Interactive Core) -->
+        <section id="generator" class="scroll-mt-20">
+            <div class="flex justify-between items-end mb-12 reveal-on-scroll">
+                <div>
+                    <h2 class="font-display text-4xl font-bold mb-2">Générateur d'Habitudes</h2>
+                    <p class="text-gray-400">Algorithme de sélection aléatoire activé.</p>
+                </div>
+                <!-- Desktop Refresh Button (Hidden on Mobile) -->
+                <button id="desk-refresh" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:bg-white/5 transition-colors text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Nouveau cycle
+                </button>
+            </div>
+
+            <!-- THE BENTO GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-6 h-auto md:h-[600px]">
+                
+                <!-- Main Card (Big) -->
+                <div class="glass-card col-span-1 md:col-span-2 md:row-span-2 p-8 flex flex-col justify-between relative overflow-hidden group reveal-on-scroll">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/20 blur-[80px] rounded-full group-hover:bg-cyan-400/30 transition-all duration-500"></div>
+                    
+                    <div id="main-tip-content" class="relative z-10 transition-all duration-500 transform translate-y-0 opacity-100">
+                        <!-- Content injected via JS -->
+                    </div>
+                    
+                    <div class="relative z-10 mt-auto pt-8">
+                         <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                             <div class="h-full bg-cyan-400 w-2/3"></div>
+                         </div>
+                         <p class="text-xs text-cyan-400 mt-2 font-mono uppercase">Priorité : Haute</p>
+                    </div>
+                </div>
+
+                <!-- Secondary Card 1 -->
+                <div class="glass-card col-span-1 md:col-span-2 p-6 flex items-center gap-6 reveal-on-scroll" style="transition-delay: 100ms;">
+                    <div id="secondary-tip-1-content" class="flex-1"></div>
+                    <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    </div>
+                </div>
+
+                <!-- Secondary Card 2 -->
+                <div class="glass-card col-span-1 md:col-span-1 p-6 flex flex-col justify-center reveal-on-scroll" style="transition-delay: 200ms;">
+                    <div id="secondary-tip-2-content"></div>
+                </div>
+
+                <!-- Interactive "Did you know?" Card -->
+                <div class="glass-card col-span-1 md:col-span-1 bg-gradient-to-br from-indigo-900/40 to-purple-900/40 p-6 flex flex-col justify-center items-center text-center reveal-on-scroll" style="transition-delay: 300ms;">
+                    <span class="text-4xl mb-3 animate-float">🧠</span>
+                    <h3 class="font-bold text-white mb-1">Neuro-Tip</h3>
+                    <p class="text-sm text-indigo-200">21 jours pour créer une habitude.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 3: DATA VIZ (Why we do this) -->
+        <section id="data" class="py-12 reveal-on-scroll">
+            <h2 class="font-display text-3xl md:text-5xl font-bold mb-12 text-center">L'Impact Quantifié</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Stat 1 -->
+                <div class="p-8 border-l border-white/10 hover:border-cyan-500/50 transition-colors duration-300">
+                    <h3 class="text-5xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 mb-2">40%</h3>
+                    <p class="text-gray-400 font-medium">Réduction d'énergie possible</p>
+                    <p class="text-sm text-gray-500 mt-2">En appliquant simplement les éco-gestes domestiques de base.</p>
+                </div>
+                
+                <!-- Stat 2 -->
+                <div class="p-8 border-l border-white/10 hover:border-purple-500/50 transition-colors duration-300">
+                    <h3 class="text-5xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 mb-2">900kg</h3>
+                    <p class="text-gray-400 font-medium">CO2 épargné par an</p>
+                    <p class="text-sm text-gray-500 mt-2">Par foyer adoptant un mode de vie "Zéro Déchet" progressif.</p>
+                </div>
+
+                <!-- Stat 3 -->
+                <div class="p-8 border-l border-white/10 hover:border-indigo-500/50 transition-colors duration-300">
+                    <h3 class="text-5xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 mb-2">x3</h3>
+                    <p class="text-gray-400 font-medium">Effet Multiplicateur</p>
+                    <p class="text-sm text-gray-500 mt-2">Vos actions influencent vos 3 cercles sociaux les plus proches.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: FOOTER / MANIFESTO -->
+        <footer class="border-t border-white/10 pt-12 text-center reveal-on-scroll">
+            <p class="font-display font-bold text-2xl mb-4">SUPER OCTO SPORK</p>
+            <p class="text-gray-500 text-sm max-w-md mx-auto mb-8">
+                Conçu avec passion, code et neuro-sciences. Une expérience digitale pour un monde physique meilleur.
+            </p>
+            <div class="flex justify-center gap-6 text-sm text-gray-600">
+                <a href="#" class="hover:text-cyan-400 transition-colors">Github</a>
+                <span>•</span>
+                <a href="https://monblog-sa-abasse.blogspot.com/" target="_blank" class="hover:text-cyan-400 transition-colors">Blog Tech</a>
+                <span>•</span>
+                <a href="#" class="hover:text-cyan-400 transition-colors">Fourthwall</a>
+            </div>
+            <p class="text-xs text-gray-800 mt-12">© 2026 Samyn-Antoy Abasse. All rights reserved.</p>
+        </footer>
+
     </main>
 
-    <!-- DÉBUT DU SCRIPT -->
+    <!-- LOGIC SCRIPT -->
     <script>
-        // --- NOUVELLE STRUCTURE DE DONNÉES ---
-        // Ajout d'icônes pour une UI plus riche
+        // --- DATA ---
         const ecoGestures = [
-            {
-                icon: "💡",
-                title: "Éteignez les lumières",
-                description: "Pensez à éteindre les lumières en quittant une pièce. Un geste simple qui économise de l'énergie et réduit votre facture."
-            },
-            {
-                icon: "💧",
-                title: "Préférez la douche au bain",
-                description: "Une douche rapide (5 min) consomme 40-60 litres d'eau, contre 150-200 litres pour un bain. L'économie est massive !"
-            },
-            {
-                icon: "♻️",
-                title: "Triez vos déchets",
-                description: "Le recyclage permet de donner une seconde vie aux matériaux. Une bouteille en plastique peut redevenir une bouteille."
-            },
-            {
-                icon: "🔌",
-                title: "Débranchez les appareils en veille",
-                description: "La 'consommation fantôme' des appareils en veille peut représenter jusqu'à 10% de votre facture d'électricité."
-            },
-            {
-                icon: "🍾",
-                title: "Utilisez une gourde",
-                description: "Chaque seconde, 10 000 bouteilles en plastique sont consommées dans le monde. Une gourde réutilisable change la donne."
-            },
-            {
-                icon: "🍎",
-                title: "Mangez local et de saison",
-                description: "Consommer local réduit l'empreinte carbone liée au transport et soutient l'économie de votre région."
-            },
-            {
-                icon: "🌡️",
-                title: "Baissez le chauffage d'1°C",
-                description: "Incroyable mais vrai : baisser votre chauffage de seulement 1°C peut réduire votre consommation d'énergie de 7%."
-            },
-            {
-                icon: "🍳",
-                title: "Mettez un couvercle sur vos casseroles",
-                description: "En couvrant vos casseroles pendant la cuisson, vous gardez la chaleur et économisez jusqu'à 25% d'énergie."
-            },
-            {
-                icon: "🚲",
-                title: "Marchez ou pédalez",
-                description: "Pour les trajets courts (moins de 5 km), laissez la voiture au garage. C'est bon pour vous et pour la planète."
-            },
-            {
-                icon: "🚫",
-                title: "Stop à la publicité papier",
-                description: "Un autocollant 'Stop Pub' sur votre boîte aux lettres peut vous épargner jusqu'à 30kg de papier par an."
-            },
-            {
-                icon: "🔧",
-                title: "Réparez au lieu de jeter",
-                description: "Avant de jeter, demandez-vous : 'Est-ce réparable ?'. L'économie circulaire commence ici."
-            },
-            {
-                icon: "💻",
-                title: "Optimisez vos e-mails",
-                description: "Ne stockez pas d'e-mails inutiles et compressez vos pièces jointes. Les data centers consomment énormément d'énergie."
-            }
+            { icon: "💡", title: "Maîtrise Lumineuse", desc: "Éteindre n'est pas une corvée, c'est un reset. Quitter une pièce = obscurité immédiate." },
+            { icon: "🚿", title: "Douche Chronométrée", desc: "5 minutes. C'est 60L d'eau économisés vs une douche de 15min. Playlist 'Speed Shower' recommandée." },
+            { icon: "🔌", title: "Vampires Énergétiques", desc: "La veille consomme 10% de votre facture. Débranchez tv, console et chargeurs la nuit." },
+            { icon: "🥩", title: "Lundi Vert", desc: "Une journée sans viande réduit votre empreinte carbone journalière de plus de 40%." },
+            { icon: "🌡️", title: "La Règle du 19°C", desc: "Chaque degré en moins au chauffage = -7% sur la facture. Mettez un pull stylé." },
+            { icon: "🚲", title: "Mobilité Douce", desc: "Moins de 2km ? Vos jambes sont le meilleur moteur. Zéro émission, 100% cardio." },
+            { icon: "💻", title: "Nettoyage Cloud", desc: "Supprimez 50 emails aujourd'hui. Les serveurs de stockage refroidissent, la planète aussi." },
+            { icon: "🛍️", title: "La Question Magique", desc: "Avant d'acheter : 'En ai-je besoin ? Vraiment ?'. Attendez 48h. L'envie passera." }
         ];
 
-        // --- RÉFÉRENCES AUX ÉLÉMENTS DU DOM ---
-        const mainTipContainer = document.getElementById('main-tip-content');
-        const secondaryTip1Container = document.getElementById('secondary-tip-1-content');
-        const secondaryTip2Container = document.getElementById('secondary-tip-2-content');
-        const refreshButton = document.getElementById('refresh-button');
+        // --- ELEMENTS ---
+        const els = {
+            main: document.getElementById('main-tip-content'),
+            sec1: document.getElementById('secondary-tip-1-content'),
+            sec2: document.getElementById('secondary-tip-2-content'),
+            navBtn: document.getElementById('nav-refresh'),
+            deskBtn: document.getElementById('desk-refresh')
+        };
 
-        let isUpdating = false; // Verrou pour éviter les double-clics
-
-        // --- FONCTION DE RAFRAÎCHISSEMENT DES GESTES ---
-        function updateGestures() {
-            if (isUpdating) return; // Empêche l'exécution si déjà en cours
-            isUpdating = true;
-
-            // 1. Appliquer les classes de fondu "sortant"
-            [mainTipContainer, secondaryTip1Container, secondaryTip2Container].forEach(container => {
-                container.classList.add('fade-out');
-                container.classList.remove('fade-in');
+        // --- LOGIC ---
+        function updateUI() {
+            // Shuffle
+            const shuffled = [...ecoGestures].sort(() => 0.5 - Math.random());
+            
+            // Fade Out
+            const targets = [els.main, els.sec1, els.sec2];
+            targets.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(10px)';
             });
 
-            // 2. Attendre la fin de l'animation "sortante"
             setTimeout(() => {
-                // 3. Mélanger et sélectionner les nouveaux gestes
-                const shuffledGestures = [...ecoGestures].sort(() => 0.5 - Math.random());
-                
-                const mainTip = shuffledGestures[0];
-                const secondaryTip1 = shuffledGestures[1];
-                const secondaryTip2 = shuffledGestures[2]; // Un troisième geste pour la boîte du bas
-
-                // 4. Injecter le nouveau contenu HTML
-                mainTipContainer.innerHTML = `
-                    <span class="text-5xl mb-4 block">${mainTip.icon}</span>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-3">
-                        ${mainTip.title}
-                    </h2>
-                    <p class="text-lg text-gray-300 leading-relaxed">
-                        ${mainTip.description}
-                    </p>
+                // Update Content
+                els.main.innerHTML = `
+                    <span class="text-6xl mb-6 block animate-float">${shuffled[0].icon}</span>
+                    <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-4 leading-tight">${shuffled[0].title}</h2>
+                    <p class="text-lg text-gray-300 font-light leading-relaxed">${shuffled[0].desc}</p>
                 `;
 
-                secondaryTip1Container.innerHTML = `
-                    <span class="text-4xl mb-3 block">${secondaryTip1.icon}</span>
-                    <h3 class="text-2xl font-bold text-white">
-                        ${secondaryTip1.title}
+                els.sec1.innerHTML = `
+                    <h3 class="text-xl font-bold text-gray-200 mb-1 flex items-center gap-2">
+                        <span>${shuffled[1].icon}</span> ${shuffled[1].title}
                     </h3>
+                    <p class="text-sm text-gray-400 line-clamp-2">${shuffled[1].desc}</p>
                 `;
 
-                secondaryTip2Container.innerHTML = `
-                    <div class="flex items-center gap-4">
-                        <span class="text-4xl">${secondaryTip2.icon}</span>
-                        <div>
-                            <h3 class="text-2xl font-bold text-white">
-                                ${secondaryTip2.title}
-                            </h3>
-                            <p class="text-gray-400">Pensez-y aussi !</p>
-                        </div>
+                els.sec2.innerHTML = `
+                    <div class="text-center">
+                        <span class="text-3xl block mb-2">${shuffled[2].icon}</span>
+                        <h3 class="text-sm font-bold text-gray-300 leading-tight">${shuffled[2].title}</h3>
                     </div>
                 `;
 
-                // 5. Appliquer les classes de fondu "entrant"
-                [mainTipContainer, secondaryTip1Container, secondaryTip2Container].forEach(container => {
-                    container.classList.remove('fade-out');
-                    container.classList.add('fade-in');
+                // Fade In
+                targets.forEach(el => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
                 });
-                
-                isUpdating = false; // Libérer le verrou
-            }, 400); // Doit correspondre à la durée de transition CSS
+            }, 300);
         }
 
-        // --- ÉVÉNEMENTS ---
+        // --- SCROLL OBSERVER (Reveal Elements) ---
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
 
-        // Rafraîchissement au clic
-        refreshButton.addEventListener('click', updateGestures);
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-visible');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
 
-        // Rafraîchissement automatique (5 minutes, comme dans l'original)
-        setInterval(updateGestures, 5 * 60 * 1000);
+        document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
 
-        // Premier chargement
+        // --- INIT ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialiser le contenu sans délai pour le premier chargement
-            // On force un état "fade-in" initial
-            [mainTipContainer, secondaryTip1Container, secondaryTip2Container].forEach(container => {
-                container.classList.add('fade-in');
-            });
-            updateGestures();
-        });
-
-        // --- EFFET DE LUEUR SUR LES BOÎTES BENTO ---
-        document.querySelectorAll('.bento-box').forEach(box => {
-            box.addEventListener('mousemove', (e) => {
-                const rect = box.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                box.style.setProperty('--x', `${x}px`);
-                box.style.setProperty('--y', `${y}px`);
-            });
+            updateUI();
+            els.navBtn.addEventListener('click', updateUI);
+            els.deskBtn.addEventListener('click', updateUI);
         });
 
     </script>
